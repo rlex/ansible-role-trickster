@@ -1,18 +1,33 @@
 trickster_version: 1.0.1
 trickster_user: trickster_sv
 trickster_cli_flags: {}
-trickster_listen_port: 9099
-trickster_listen_address: 0.0.0.0
-trickster_logging_log_level: info
+trickster_main_instance_id: 0
+trickster_main_config_handler_path: /trickster/config
+trickster_main_ping_handler_path: /trickster/ping
+trickster_frontend_listen_address: 0.0.0.0
+trickster_frontend_listen_port: 9099
+trickster_frontend_tls_listen_address: 0.0.0.0
+trickster_frontend_tls_listen_port: 0
+trickster_frontend_connections_limit: 0
 trickster_metrics_listen_port: 8082
 trickster_metrics_listen_address: 127.0.0.1
+trickster_logging_log_level: info
 trickster_origins:
-  - origin: default
+  - origin: prometheus
     config:
       - is_default = true
       - origin_type = 'prometheus'
-      - origin_url = 'http://localhost:9090'
+      - origin_url = 'http://localhost:8428'
+      - cache_name = 'memory_cache_prometheus'
 trickster_caches:
-  default:
+  - cache: memory_cache_prometheus
     config:
       - cache_type = 'memory'
+
+trickster_tracing:
+  - tracing: default
+    config:
+      - implementation = 'opentelemetry'
+      - exporter = 'noop'
+      - collector = ''
+      - sample_rate = 1.0
