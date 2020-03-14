@@ -1,0 +1,35 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=trickster
+After=network-online.target
+StartLimitInterval=0
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+PIDFile=/var/run/trickster.pid
+User={{ trickster_user }}
+Group={{ trickster_user }}
+PermissionsStartOnly=true
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/local/bin/trickster \
+  {% for flag, flag_value in trickster_cli_flags.items() -%}
+  -{{ flag }} {{ flag_value }} \
+  {% endfor -%}
+  -config="/etc/trickster.conf"
+
+SyslogIdentifier=trickster
+KillMode=process
+Restart=always
+RestartSec=5
+
+LockPersonality=true
+NoNewPrivileges=true
+MemoryDenyWriteExecute=true
+PrivateTmp=true
+ProtectHome=true
+RemoveIPC=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

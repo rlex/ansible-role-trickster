@@ -1,0 +1,64 @@
+- name: create trickster system group
+  group:
+    name: "{{ trickster_user }}"
+    system: true
+    state: present
+
+- name: create trickster system user
+  user:
+    name: "{{ trickster_user }}"
+    system: true
+    shell: "/usr/sbin/nologin"
+    group: "{{ trickster_user }}"
+    createhome: false
+
+- name: "Download trickster files"
+  become: false
+  get_url:
+    url: "https://github.com/Comcast/trickster/releases/download/v{{ trickster_version }}/trickster-{{ trickster_version }}.linux-amd64.tar.gz"
+    dest: "/tmp/"
+  delegate_to: localhost
+
+- name: "Create temporary directory"
+  become: false
+  file:
+    path: /tmp/trickster_{{trickster_version}}_linux_amd64
+    state: directory
+  delegate_to: localhost
+
+- name: "Unarchive trickster files"
+  become: false
+  unarchive:
+    src: "/tmp/trickster-{{ trickster_version }}.linux-amd64.tar.gz"
+    remote_src: yes
+    dest: "/tmp/trickster_{{trickster_version}}_linux_amd64/"
+    creates: "/tmp/trickster_{{trickster_version}}_linux_amd64/OPATH/trickster-{{ trickster_version }}.linux-amd64"
+  delegate_to: localhost
+  check_mode: false
+
+- name: propagate trickster binary
+  copy:
+    src: "/tmp/trickster_{{trickster_version}}_linux_amd64/OPATH/trickster-{{ trickster_version }}.linux-amd64"
+    dest: "/usr/local/bin/trickster"
+    mode: 0755
+    owner: "{{ trickster_user }}"
+    group: "{{ trickster_user }}"
+  notify:
+    - restart trickster
+
+- name: create systemd service unit
+  template:
+    src: trickster.service.j2
+    dest: /etc/systemd/system/trickster.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart trickster
+
+- name: Generate trickster config file
+  template:
+      dest: /etc/trickster.conf
+      src: trickster.conf.j2
+  notify:
+    - restart trickster

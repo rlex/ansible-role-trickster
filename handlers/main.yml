@@ -1,0 +1,5 @@
+- name: restart trickster
+  systemd:
+    daemon_reload: true
+    name: trickster
+    state: restarted
