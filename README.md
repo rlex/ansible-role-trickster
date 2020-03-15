@@ -4,9 +4,7 @@ TeamCity
 
 Ansible role for [Trickster by comcast](https://github.com/Comcast/trickster)
 
-https://github.com/Comcast/trickster/blob/master/cmd/trickster/conf/example.conf
-
-This role will install and configure trickster
+For possible settings and format look at [example config file in trickster repo](https://github.com/Comcast/trickster/blob/master/cmd/trickster/conf/example.conf)
 
 ## Compatibility
 This role is compatible with any modern systemd-based distro.  
@@ -14,9 +12,23 @@ This role is compatible with any modern systemd-based distro.
 ## Role Variables
 | Variable name                           | Default value                                                      | Description                      |
 |-----------------------------------------|--------------------------------------------------------------------|----------------------------------|
-| trickster_user                    | `trickster-sv`                                                         | system user         |
-| trickster_version                   | `1.0.1`                                                         | version of trickster       |
-
+| trickster_user                        | `trickster-sv`      | system user                                 |
+| trickster_version                     | `1.0.1`             | version of trickster                        |
+| trickster_cli_flags                   | `{}`                | arguments passed to trickster               |
+| trickster_main_instance_id            | `0`                 | instance id when running multiple instances |
+| trickster_main_config_handler_path    | `/trickster/config` | config URL                                  |
+| trickster_main_ping_handler_path      | `/trickster/ping`   | ping URL                                    |
+| trickster_frontend_listen_address     | `0.0.0.0`           | address to listen on                        |
+| trickster_frontend_listen_port        | `9099`              | port to listen on                           |
+| trickster_frontend_tls_listen_address | `0.0.0.0`           | address to listen on (TLS)                  |
+| trickster_frontend_tls_listen_port    | `0`                 | port to listen on (TLS)                     |
+| trickster_frontend_connections_limit  | `0`                 | connection limit on tls/plain               |
+| trickster_metrics_listen_port         | `8082`              | Port to listen on for metrics               |
+| trickster_metrics_listen_address      | `127.0.0.1`         | address to listen on for metrics            |
+| trickster_logging_log_level           | `info`              | Log level                                   |
+| trickster_origins                     | `default dict`      | Dict with trickster origins                 |
+| trickster_tracing                     | `default dict`      | Dict with trickster tracing                 |
+| trickster_caching                     | `default dict`      | Dict with trickster caching                 |
 ## Origins
 First thing you need to configure is origin which points to prometheus / etc TSDB.
 Example variable:
@@ -27,6 +39,7 @@ trickster_origins:
       - is_default = true
       - origin_type = 'prometheus'
       - origin_url = 'http://localhost:9090'
+      - cache_name = 'bbolt'
     health_check_headers:
       - Authorization = 'Basic SomeHash'
     tls:
@@ -65,7 +78,7 @@ trickster_caches:
     index:
       - max_size_backoff_objects = 100
     bbolt:
-      - filename = 'trickster.db'
+      - filename = '/tmp/trickster.db'
       - bucket = 'trickster'
 ```
 Subdicts for trickster_caches:

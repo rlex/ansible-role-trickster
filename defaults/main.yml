@@ -23,7 +23,6 @@ trickster_caches:
   - cache: memory_cache_prometheus
     config:
       - cache_type = 'memory'
-
 trickster_tracing:
   - tracing: default
     config:
