@@ -30,3 +30,4 @@ trickster_tracing:
       - exporter = 'noop'
       - collector = ''
       - sample_rate = 1.0
+trickster_caches_filesystem_path: ""

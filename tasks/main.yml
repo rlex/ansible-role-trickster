@@ -56,6 +56,15 @@
   notify:
     - restart trickster
 
+- name: ensure trickster cache dir is created
+  file:
+    path: "{{ trickster_caches_filesystem_path }}"
+    state: directory
+    owner: "{{ trickster_user }}"
+    group: "{{ trickster_user }}"
+    mode: '0755'
+  when: trickster_caches_filesystem_path != ""
+
 - name: Generate trickster config file
   template:
       dest: /etc/trickster.conf
