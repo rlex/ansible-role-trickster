@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  role_name: trickster
+  description: Install Trickster as a service
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []
