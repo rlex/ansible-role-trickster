@@ -44,6 +44,14 @@ connections_limit = {{ trickster_frontend_connections_limit }}
       {{ items }}
 {% endfor %}
 {% endif %}
+
+{% if item.filesystem is defined and item.filesystem is iterable %}
+      [caches.{{ item.cache }}.filesystem]
+{% for items in item.filesystem %}
+      {{ items }}
+{% endfor %}
+{% endif %}
+
 {% endfor %}
 {% endif %}
 
