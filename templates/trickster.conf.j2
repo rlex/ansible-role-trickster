@@ -55,6 +55,19 @@ connections_limit = {{ trickster_frontend_connections_limit }}
 {% endfor %}
 {% endif %}
 
+{% if trickster_request_rewriters is defined and trickster_request_rewriters is iterable %}
+[request_rewriters]
+{% for item in trickster_request_rewriters %}
+  [request_rewriters.{{ item.name }}]
+  instructions = [
+{% for instruction in item.instructions %}
+    {{ instruction }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
+  ]
+{% endfor %}
+{% endif %}
+
 {% if trickster_origins is defined and trickster_origins is iterable %}
 [origins]
 {% for item in trickster_origins %}
@@ -100,4 +113,4 @@ listen_address = '{{ trickster_metrics_listen_address }}'
 
 [logging]
 log_level = '{{ trickster_logging_log_level }}'
-#log_file = '/some/path/to/trickster.log'
+log_file = '{{ trickster_logging_log_file }}'
