@@ -15,30 +15,23 @@
 - name: "Download trickster files"
   become: false
   get_url:
-    url: "https://github.com/Comcast/trickster/releases/download/v{{ trickster_version }}/trickster-{{ trickster_version }}.linux-amd64.tar.gz"
+    url: "https://github.com/Comcast/trickster/releases/download/v{{ trickster_version }}/trickster-{{ trickster_version }}.tar.gz"
     dest: "/tmp/"
-  delegate_to: localhost
-
-- name: "Create temporary directory"
-  become: false
-  file:
-    path: /tmp/trickster_{{trickster_version}}_linux_amd64
-    state: directory
   delegate_to: localhost
 
 - name: "Unarchive trickster files"
   become: false
   unarchive:
-    src: "/tmp/trickster-{{ trickster_version }}.linux-amd64.tar.gz"
+    src: "/tmp/trickster-{{ trickster_version }}.tar.gz"
     remote_src: yes
-    dest: "/tmp/trickster_{{trickster_version}}_linux_amd64/"
-    creates: "/tmp/trickster_{{trickster_version}}_linux_amd64/OPATH/trickster-{{ trickster_version }}.linux-amd64"
+    dest: "/tmp/"
+    creates: "/tmp/trickster-{{trickster_version}}/./bin/trickster-{{ trickster_version }}.linux-amd64"
   delegate_to: localhost
   check_mode: false
 
 - name: propagate trickster binary
   copy:
-    src: "/tmp/trickster_{{trickster_version}}_linux_amd64/OPATH/trickster-{{ trickster_version }}.linux-amd64"
+    src: "/tmp/trickster-{{trickster_version}}/./bin/trickster-{{ trickster_version }}.linux-amd64"
     dest: "/usr/local/bin/trickster"
     mode: 0755
     owner: "{{ trickster_user }}"
